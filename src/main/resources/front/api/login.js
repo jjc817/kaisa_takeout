@@ -1,3 +1,11 @@
+function saveApi(data) {
+    return $axios({
+        'url': '/user/save',
+        'method': 'post',
+        data
+    })
+}
+
 function loginApi(data) {
     return $axios({
       'url': '/user/login',
@@ -12,5 +20,3 @@ function loginoutApi() {
     'method': 'post',
   })
 }
-
-  

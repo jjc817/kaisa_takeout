@@ -45,7 +45,7 @@
   font-family: PingFangSC, PingFangSC-Regular;
   font-weight: 400;
   text-align: left;
-  color: #ffc200;
+  color: #06ccc5;
   letter-spacing: 0px;
 }
 
@@ -86,7 +86,7 @@
 }
 
 #login .btnPhone {
-  background: #ffc200;
+  background: #06ccc5;
   color: #333333;
 }
 

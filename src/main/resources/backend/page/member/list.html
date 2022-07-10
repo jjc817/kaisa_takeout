@@ -75,6 +75,7 @@
               class="blueBug"
               @click="addMemberHandle(scope.row.id)"
               :class="{notAdmin:user !== 'admin'}"
+              v-if="user === 'admin'"
             >
               编辑
             </el-button>
@@ -85,7 +86,7 @@
               @click="statusHandle(scope.row)"
               v-if="user === 'admin'"
             >
-              {{ scope.row.status == '1' ? '禁用' : '启用' }}
+              {{ scope.row.status == '1' ? '删除' : '启用' }}
             </el-button>
           </template>
         </el-table-column>

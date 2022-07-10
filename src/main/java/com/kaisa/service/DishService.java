@@ -1,8 +1,12 @@
 package com.kaisa.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.kaisa.common.R;
 import com.kaisa.dto.DishDto;
 import com.kaisa.entity.Dish;
+
+import java.util.List;
 
 public interface DishService extends IService<Dish> {
 
@@ -14,4 +18,10 @@ public interface DishService extends IService<Dish> {
 
     //更新菜品信息，同时更新对应的口味信息
     public void updateWithFlavor(DishDto dishDto);
+
+    R<Page> pageOfDish(int page, int pageSize, String name,CategoryService categoryService);
+
+    R<List<DishDto>> listDish(Dish dish,CategoryService categoryService);
+
+    R<String> stopSell(Long[] ids,SetmealService setmealService);
 }

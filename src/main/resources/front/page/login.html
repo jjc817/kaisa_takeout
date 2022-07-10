@@ -5,8 +5,8 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=no,minimal-ui">
-        <title>菩提阁</title>
-        <link rel="icon" href="../images/favico.ico">
+        <title>浙师大</title>
+        <link rel="icon" href="../images/zsdimage.png">
         <!--不同屏幕尺寸根字体设置-->
         <script src="../js/base.js"></script>
         <!--element-ui的样式-->
@@ -22,6 +22,8 @@
         <div id="login" v-loading="loading">
             <div class="divHead">登录</div>
             <div class="divContainer">
+<!--                <el-input placeholder=" 请输入用户名" v-model="form.name"  maxlength='20'/></el-input>-->
+<!--                <div class="divSplit"></div>-->
                 <el-input placeholder=" 请输入手机号码" v-model="form.phone"  maxlength='20'/></el-input>
                 <div class="divSplit"></div>
                 <el-input placeholder=" 请输入验证码" v-model="form.code"  maxlength='20'/></el-input>
@@ -29,6 +31,7 @@
             </div>
             <div class="divMsg" v-if="msgFlag">手机号输入不正确，请重新输入</div>
             <el-button type="primary" :class="{btnSubmit:1===1,btnNoPhone:!form.phone,btnPhone:form.phone}" @click="btnLogin">登录</el-button>
+            <el-button type="primary" :class="{btnSubmit:1===1}" @click="register">注册</el-button>
         </div>
         <!-- 开发环境版本，包含了有帮助的命令行警告 -->
         <script src="../../backend/plugins/vue/vue.js"></script>
@@ -69,12 +72,15 @@
                     }
                 },
                 async btnLogin(){
-                    if(this.form.phone && this.form.code){
+                    if(this.form.code && this.form.phone){
                         this.loading = true
                         const res = await loginApi({phone:this.form.phone})
                         this.loading = false
                         if(res.code === 1){
+                            console.log("用户登录信息",res)
                             sessionStorage.setItem("userPhone",this.form.phone)
+                            sessionStorage.setItem("userName",res.data.name)
+                            sessionStorage.setItem("userSex",res.data.sex)
                             window.requestAnimationFrame(()=>{
                                 window.location.href= '/front/index.html'
                             })                           
@@ -84,6 +90,11 @@
                     }else{
                         this.$notify({ type:'warning', message:'请输入手机号码'});
                     }
+                },
+                register(){
+                    window.requestAnimationFrame(()=>{
+                        window.location.href= '/front/page/register.html'
+                    })
                 }
             }
         })

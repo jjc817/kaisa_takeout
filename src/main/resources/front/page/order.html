@@ -110,6 +110,7 @@
                     }
                     const res = await orderPagingApi(this.paging)
                     if(res.code === 1){
+                        console.log(res)
                         this.orderList.push(...res.data.records)
                         let records = res.data.records
                         if(records && Array.isArray(records)){

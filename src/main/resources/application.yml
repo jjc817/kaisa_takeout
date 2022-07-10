@@ -1,14 +1,23 @@
 server:
-  port: 8080
+  port: 80
 spring:
   application:
     name: kaisa_take_out
   datasource:
     druid:
       driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://192.168.159.133:3306/kaisa?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+      url: jdbc:mysql://192.168.159.135:3306/kaisa?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
       username: root
       password: jjc0817.
+  redis:
+    host: 192.168.159.135
+    port: 6379
+    password: jjc0817.
+    database: 0
+  cache:
+    type: redis
+    redis:
+      time-to-live: 1800000
 mybatis-plus:
   configuration:
     #在映射实体或者属性时，将数据库中表名和字段名中的下划线去掉，按照驼峰命名法映射

@@ -5,8 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=no,minimal-ui">
-    <title>菩提阁</title>
-    <link rel="icon" href="images/favico.ico">
+    <title>浙师大</title>
+    <link rel="icon" href="images/zsdimage.png">
     <!--不同屏幕尺寸根字体设置-->
     <script src="js/base.js"></script>
     <!--element-ui的样式-->
@@ -25,9 +25,9 @@
       </div>
       <div class="divTitle">
         <div class="divStatic">
-          <img src="images/logo.png" class="logo"/>
+          <img src="images/zsdimage.png" class="logo"/>
           <div class="divDesc">
-            <div class="divName">菩提阁餐厅</div>
+            <div class="divName">浙师大餐厅</div>
             <div class="divSend">
                 <span><img src="images/time.png"/> 距离1.5km</span>
                 <span><img src="images/money.png"/> 配送费6元</span>
@@ -385,6 +385,7 @@
             },
             //菜单中往购物车中添加商品
             async addCart(item){
+              console.log("addCart方法被调用item为：",item)
               let params = {
                 amount:item.price/100,//金额
                 dishFlavor:item.dishFlavor,//口味  如果没有传undefined
@@ -407,6 +408,7 @@
                 })
                 if(this.setMealDialog.show){
                   item.number = res.data.number
+                  console.log("addCart方法调用结束item为：",item)
                 }
                 this.getCartData()
               }else{
@@ -416,6 +418,7 @@
 
             //菜单中减少选中的商品
             async subtractCart(item){
+                console.log("subtractCart方法被调用item为：",item)
                 let params = {
                   dishId:item.id,
                 }
@@ -471,6 +474,7 @@
             },
             //购物车中减少商品数量
             async cartNumberSubtract(item){
+              console.log("cartNumberSubtract方法被调用item为：",item)
               let params = {
                   dishId:item.dishId,
                   setmealId:item.setmealId,

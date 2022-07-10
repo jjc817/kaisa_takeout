@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=no,minimal-ui">
+    <title>浙师大</title>
+    <link rel="icon" href="../images/zsdimage.png">
+    <!--不同屏幕尺寸根字体设置-->
+    <script src="../js/base.js"></script>
+    <!--element-ui的样式-->
+    <link rel="stylesheet" href="../../backend/plugins/element-ui/index.css" />
+    <!--引入vant样式-->
+    <link rel="stylesheet" href="../styles/vant.min.css"/>
+    <!-- 引入样式  -->
+    <link rel="stylesheet" href="../styles/index.css" />
+    <!--本页面内容的样式-->
+    <link rel="stylesheet" href="../styles/register.css" />
+</head>
+<body>
+<div id="register" v-loading="loading">
+    <div class="divHead">注册</div>
+    <div class="divContainer">
+        <el-input placeholder=" 请输入用户名" v-model="form.name"  maxlength='20'/></el-input>
+        <div class="divSplit"></div>
+        <el-input placeholder=" 请输入手机号码" v-model="form.phone"  maxlength='20'/></el-input>
+        <div class="divSplit"></div>
+    </div>
+    <div id="radio">
+        <el-radio label="1" v-model="form.sex">男</el-radio>
+        <el-radio label="0" v-model="form.sex">女</el-radio>
+    </div>
+    <div class="divMsg" v-if="msgFlag">手机号输入不正确，请重新输入</div>
+    <el-button type="primary" :class="{btnSubmit:1===1,btnNoPhone:!form.phone,btnPhone:form.phone}" @click="btnRegister">注册</el-button>
+</div>
+<!-- 开发环境版本，包含了有帮助的命令行警告 -->
+<script src="../../backend/plugins/vue/vue.js"></script>
+<!-- 引入组件库 -->
+<script src="../../backend/plugins/element-ui/index.js"></script>
+<!-- 引入vant样式 -->
+<script src="../js/vant.min.js"></script>
+<!-- 引入axios -->
+<script src="../../backend/plugins/axios/axios.min.js"></script>
+<script src="../js/request.js"></script>
+<script src="../api/login.js"></script>
+</body>
+<script>
+    new Vue({
+        el:"#register",
+        data(){
+            return {
+                form:{
+                    phone:'',
+                    name:"",
+                    sex:'',
+
+                },
+                msgFlag:false,
+                loading:false
+            }
+        },
+        computed:{},
+        created(){},
+        mounted(){},
+        methods:{
+            async btnRegister() {
+                if (this.form.name && this.form.phone) {
+                    this.loading = true
+                    const res = await saveApi({
+                        phone: this.form.phone,
+                        name: this.form.name,
+                        sex: this.form.sex
+                    })
+                    this.loading = false
+                    if (res.code === 1) {
+                        console.log("用户登录信息", res)
+                        sessionStorage.setItem("userPhone", this.form.phone)
+                        sessionStorage.setItem("userName", this.form.name)
+                        sessionStorage.setItem("userSex", res.data.sex)
+
+                        window.requestAnimationFrame(() => {
+                            window.location.href = '/front/index.html'
+                        })
+                    } else {
+                        this.$notify({type: 'warning', message: res.msg});
+                    }
+                } else {
+                    this.$notify({type: 'warning', message: '请输入手机号码'});
+                }
+            }
+        }
+    })
+</script>
+</html>

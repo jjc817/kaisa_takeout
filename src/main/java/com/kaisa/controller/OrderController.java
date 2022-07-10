@@ -1,29 +1,17 @@
 package com.kaisa.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.kaisa.common.BaseContext;
 import com.kaisa.common.R;
-import com.kaisa.dto.DishDto;
-import com.kaisa.entity.*;
+import com.kaisa.entity.Orders;
+import com.kaisa.service.OrderDetailService;
 import com.kaisa.service.OrderService;
 import com.kaisa.service.ShoppingCartService;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.BeanUtils;
-import org.springframework.core.annotation.Order;
 import org.springframework.web.bind.annotation.*;
-import sun.util.calendar.BaseCalendar;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpSession;
-import javax.swing.text.DateFormatter;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -34,6 +22,8 @@ public class OrderController {
     private OrderService orderService;
     @Resource
     private ShoppingCartService shoppingCartService;
+    @Resource
+    private OrderDetailService orderDetailService;
 
     /**
      * 用户下单
@@ -56,65 +46,47 @@ public class OrderController {
     @GetMapping("/page")
     public R<Page> page(int page, int pageSize, Long number, String beginTime, String endTime ){
         log.info("page = {},pageSize = {},name = {},begin={},end={}" ,page,pageSize,number,beginTime,endTime);
-        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        //构造分页构造器
-        Page pageInfo = new Page(page,pageSize);
-
-        //构造条件构造器
-        LambdaQueryWrapper<Orders> queryWrapper = new LambdaQueryWrapper();
-        //添加过滤条件
-        queryWrapper.eq(number != null,Orders::getId,number);
-        if(beginTime!=null){
-            log.info("page = {},pageSize = {},name = {},begin={},end={}" ,page,pageSize,number,beginTime,endTime);
-            final LocalDateTime begin = LocalDateTime.parse(beginTime, df);
-            queryWrapper.ge(Orders::getOrderTime,begin);
-        }
-        if(endTime!=null){
-            final LocalDateTime end = LocalDateTime.parse(endTime, df);
-            queryWrapper.le(Orders::getOrderTime,end);
-
-        }
-        //添加排序条件
-        queryWrapper.orderByDesc(Orders::getOrderTime);
-
-        //执行查询
-        orderService.page(pageInfo,queryWrapper);
-
-        return R.success(pageInfo);
+        return orderService.pageOrder(page,pageSize,number,beginTime,endTime);
     }
+
+
+    /**
+     * 用户端展示自己的订单分页查询
+     * @param page
+     * @param pageSize
+     * @return
+     * 遇到的坑：原来分页对象中的records集合存储的对象是分页泛型中的对象，里面有分页泛型对象的数据
+     * 开始的时候我以为前端只传过来了分页数据，其他所有的数据都要从本地线程存储的用户id开始查询，
+     * 结果就出现了一个用户id查询到 n个订单对象，然后又使用 n个订单对象又去查询 m 个订单明细对象，
+     * 结果就出现了评论区老哥出现的bug(嵌套显示数据....)
+     * 正确方法:直接从分页对象中获取订单id就行，问题大大简化了......
+     */
     @GetMapping("/userPage")
-    public R<Page> userPage(int page, int pageSize,HttpSession session ){
-        log.info("page = {},pageSize = {},name = {},begin={},end={}" ,page,pageSize);
-        //构造分页构造器
-        Page pageInfo = new Page(page,pageSize);
-
-        //构造条件构造器
-        LambdaQueryWrapper<Orders> queryWrapper = new LambdaQueryWrapper();
-        //添加过滤条件
-        queryWrapper.eq(Orders::getUserId,session.getAttribute("user"));
-        //添加排序条件
-        queryWrapper.orderByDesc(Orders::getOrderTime);
-
-        //执行查询
-        orderService.page(pageInfo,queryWrapper);
-
-        return R.success(pageInfo);
+    public R<Page> page(int page, int pageSize){
+        return orderService.userPage(page,pageSize);
     }
+
+
+
     @PutMapping
     public R<String> change(@RequestBody Orders order){
         LambdaUpdateWrapper<Orders> wrapper = new LambdaUpdateWrapper<>();
         wrapper.eq(Orders::getId,order.getId()).set(Orders::getStatus,order.getStatus());
         orderService.update(wrapper);
-        return R.success("成功");
+        return R.success("修改状态成功");
     }
+
+
+    //客户端点击再来一单
+    /**
+     * 前端点击再来一单是直接跳转到购物车的，所以为了避免数据有问题，再跳转之前我们需要把购物车的数据给清除
+     * ①通过orderId获取订单明细
+     * ②把订单明细的数据的数据塞到购物车表中，不过在此之前要先把购物车表中的数据给清除(清除的是当前登录用户的购物车表中的数据)，
+     * 不然就会导致再来一单的数据有问题；
+     * (这样可能会影响用户体验，但是对于外卖来说，用户体验的影响不是很大，电商项目就不能这么干了)
+     */
     @PostMapping("/again")
-    public R<String> again(Long id){
-//        LambdaQueryWrapper<Orders> queryWrapper = new LambdaQueryWrapper<>();
-//        queryWrapper.eq(Orders::getId, id);
-//        Orders order = orderService.getOne(queryWrapper);
-//        log.info("order is {}",order);
-//        order.setOrderTime(LocalDateTime.now());
-//        orderService.save(order);
-        return R.success("再来一单成功");
+    public R<String> againSubmit(@RequestBody Map<String,String> map){
+        return orderService.again(map);
     }
 }

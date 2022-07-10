@@ -1,14 +1,11 @@
 package com.kaisa.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.kaisa.common.BaseContext;
 import com.kaisa.common.R;
 import com.kaisa.entity.ShoppingCart;
 import com.kaisa.service.ShoppingCartService;
 import lombok.extern.slf4j.Slf4j;
-import org.omg.CORBA.PUBLIC_MEMBER;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -96,34 +93,38 @@ public class ShoppingCartController {
      */
     @DeleteMapping("/clean")
     public R<String> clean(){
-        //SQL:delete from shopping_cart where user_id = ?
-
-        LambdaQueryWrapper<ShoppingCart> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(ShoppingCart::getUserId, BaseContext.getCurrentId());
-
-        shoppingCartService.remove(queryWrapper);
-
-        return R.success("清空购物车成功");
+        return shoppingCartService.clean();
     }
     @PostMapping("/sub")
-    public R<String> sub(@RequestBody ShoppingCart shoppingCart){
-
-        LambdaQueryWrapper<ShoppingCart> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(ShoppingCart::getUserId, BaseContext.getCurrentId());
-        queryWrapper.eq(shoppingCart.getSetmealId()!=null,ShoppingCart::getSetmealId, shoppingCart.getSetmealId());
-        queryWrapper.eq(shoppingCart.getDishId()!=null,ShoppingCart::getDishId, shoppingCart.getDishId());
-        shoppingCart = shoppingCartService.getOne(queryWrapper);
-
-        log.info("购物车数据:{}",shoppingCart);
-        LambdaUpdateWrapper<ShoppingCart> updateWrapper = new LambdaUpdateWrapper<>();
-        updateWrapper.eq(shoppingCart.getSetmealId()!=null,ShoppingCart::getSetmealId, shoppingCart.getSetmealId());
-        updateWrapper.eq(shoppingCart.getDishId()!=null,ShoppingCart::getDishId, shoppingCart.getDishId());
-        updateWrapper.set(ShoppingCart::getNumber,shoppingCart.getNumber() - 1);
-
-        shoppingCartService.update(updateWrapper);
-
-        return R.success("成功");
+    public R<ShoppingCart> sub(@RequestBody ShoppingCart shoppingCart){
+//        LambdaQueryWrapper<ShoppingCart> queryWrapper = new LambdaQueryWrapper<>();
+//        queryWrapper.eq(ShoppingCart::getUserId, BaseContext.getCurrentId());
+//        queryWrapper.eq(shoppingCart.getSetmealId()!=null,ShoppingCart::getSetmealId, shoppingCart.getSetmealId());
+//        queryWrapper.eq(shoppingCart.getDishId()!=null,ShoppingCart::getDishId, shoppingCart.getDishId());
+//        shoppingCart = shoppingCartService.getOne(queryWrapper);
+//
+//        log.info("购物车数据:{}",shoppingCart);
+//        if(shoppingCart.getNumber()==1){
+//            cleanOne(shoppingCart);
+//        }
+//        LambdaUpdateWrapper<ShoppingCart> updateWrapper = new LambdaUpdateWrapper<>();
+//        updateWrapper.eq(shoppingCart.getSetmealId()!=null,ShoppingCart::getSetmealId, shoppingCart.getSetmealId());
+//        updateWrapper.eq(shoppingCart.getDishId()!=null,ShoppingCart::getDishId, shoppingCart.getDishId());
+//        updateWrapper.set(ShoppingCart::getNumber,shoppingCart.getNumber() - 1);
+//
+//        shoppingCartService.update(updateWrapper);
+//
+//        return R.success("成功");
+        //Todo 第一次减页面的数据不会更改，购物车中数据正常
+         return shoppingCartService.sub(shoppingCart);
     }
+//    private void cleanOne(ShoppingCart shoppingCart){
+//        LambdaQueryWrapper<ShoppingCart> wrapper = new LambdaQueryWrapper<>();
+//        wrapper.eq(shoppingCart.getDishId()!=null,ShoppingCart::getDishId,shoppingCart.getDishId())
+//                .eq(shoppingCart.getSetmealId()!=null,ShoppingCart::getSetmealId,shoppingCart.getSetmealId());
+//        shoppingCartService.remove(wrapper);
+//    }
+
 
 
 }
