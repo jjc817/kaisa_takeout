@@ -428,6 +428,7 @@
                   }
                 }
                 const res = await updateCartApi(params)
+                console.log(res)
                 if(res.code === 1){
                 this.dishList.forEach(dish=>{
                   if(dish.id === item.id){
@@ -480,6 +481,7 @@
                   setmealId:item.setmealId,
                 }
                 const res = await updateCartApi(params)
+              console.log(res)
                 if(res.code === 1){
                 this.dishList.forEach(dish=>{
                   if(dish.id === (item.dishId || item.setmealId)){

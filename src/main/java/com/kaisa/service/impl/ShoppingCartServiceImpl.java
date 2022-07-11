@@ -22,7 +22,9 @@ public class ShoppingCartServiceImpl extends ServiceImpl<ShoppingCartMapper, Sho
         queryWrapper.eq(shoppingCart.getDishId()!=null,ShoppingCart::getDishId, shoppingCart.getDishId());
         shoppingCart = getOne(queryWrapper);
         if(shoppingCart.getNumber() == 1){
-            cleanById(shoppingCart);
+            removeById(shoppingCart.getId());
+            shoppingCart.setNumber(shoppingCart.getNumber()-1);
+            return R.success(shoppingCart);
         }
         LambdaUpdateWrapper<ShoppingCart> wrapper = new LambdaUpdateWrapper<>();
         wrapper.eq(shoppingCart.getDishId()!=null,ShoppingCart::getDishId,shoppingCart.getDishId())
@@ -30,6 +32,8 @@ public class ShoppingCartServiceImpl extends ServiceImpl<ShoppingCartMapper, Sho
                 .set(ShoppingCart::getNumber,shoppingCart.getNumber()-1);
         boolean update = update(wrapper);
         if (update) {
+            //返回的数据与数据库更新的不一致，先减一在返回
+            shoppingCart.setNumber(shoppingCart.getNumber()-1);
             return R.success(shoppingCart);
         }else {
             return R.error("操作失败");
@@ -47,12 +51,5 @@ public class ShoppingCartServiceImpl extends ServiceImpl<ShoppingCartMapper, Sho
         remove(queryWrapper);
 
         return R.success("清空购物车成功");
-    }
-
-    private void cleanById(ShoppingCart shoppingCart){
-        LambdaQueryWrapper<ShoppingCart> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(shoppingCart.getDishId()!=null,ShoppingCart::getDishId,shoppingCart.getDishId())
-                .eq(shoppingCart.getSetmealId()!=null,ShoppingCart::getSetmealId,shoppingCart.getSetmealId());
-        remove(wrapper);
     }
 }

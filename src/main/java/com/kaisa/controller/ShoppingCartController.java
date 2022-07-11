@@ -97,33 +97,9 @@ public class ShoppingCartController {
     }
     @PostMapping("/sub")
     public R<ShoppingCart> sub(@RequestBody ShoppingCart shoppingCart){
-//        LambdaQueryWrapper<ShoppingCart> queryWrapper = new LambdaQueryWrapper<>();
-//        queryWrapper.eq(ShoppingCart::getUserId, BaseContext.getCurrentId());
-//        queryWrapper.eq(shoppingCart.getSetmealId()!=null,ShoppingCart::getSetmealId, shoppingCart.getSetmealId());
-//        queryWrapper.eq(shoppingCart.getDishId()!=null,ShoppingCart::getDishId, shoppingCart.getDishId());
-//        shoppingCart = shoppingCartService.getOne(queryWrapper);
-//
-//        log.info("购物车数据:{}",shoppingCart);
-//        if(shoppingCart.getNumber()==1){
-//            cleanOne(shoppingCart);
-//        }
-//        LambdaUpdateWrapper<ShoppingCart> updateWrapper = new LambdaUpdateWrapper<>();
-//        updateWrapper.eq(shoppingCart.getSetmealId()!=null,ShoppingCart::getSetmealId, shoppingCart.getSetmealId());
-//        updateWrapper.eq(shoppingCart.getDishId()!=null,ShoppingCart::getDishId, shoppingCart.getDishId());
-//        updateWrapper.set(ShoppingCart::getNumber,shoppingCart.getNumber() - 1);
-//
-//        shoppingCartService.update(updateWrapper);
-//
-//        return R.success("成功");
-        //Todo 第一次减页面的数据不会更改，购物车中数据正常
+
          return shoppingCartService.sub(shoppingCart);
     }
-//    private void cleanOne(ShoppingCart shoppingCart){
-//        LambdaQueryWrapper<ShoppingCart> wrapper = new LambdaQueryWrapper<>();
-//        wrapper.eq(shoppingCart.getDishId()!=null,ShoppingCart::getDishId,shoppingCart.getDishId())
-//                .eq(shoppingCart.getSetmealId()!=null,ShoppingCart::getSetmealId,shoppingCart.getSetmealId());
-//        shoppingCartService.remove(wrapper);
-//    }
 
 
 
