@@ -8,7 +8,7 @@ spring:
       driver-class-name: com.mysql.cj.jdbc.Driver
       url: jdbc:mysql://192.168.159.135:3306/kaisa?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
       username: root
-      password: jjc0817.
+      password: 
   redis:
     host: 192.168.159.135
     port: 6379
